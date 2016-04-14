@@ -5,7 +5,7 @@ import subprocess
 from lxml import html
 
 
-parser = argparse.ArgumentParser(help="Download Fshare with given Link and Premium Account. Author: Tu Do Anh")
+parser = argparse.ArgumentParser(description="Download Fshare with given Link and Premium Account. Author: Tu Do Anh")
 parser.add_argument("link", help="Fshare link", type=str)
 args = parser.parse_args()
 
