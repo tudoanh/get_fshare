@@ -2,7 +2,7 @@
 
 sudo apt-get update
 
-sudo apt-get install git vim python-pip python-virtualenv build-essential python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev
+sudo apt-get install -y vim python-pip python-virtualenv build-essential python-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev
 
 virtualenv fshare
 
