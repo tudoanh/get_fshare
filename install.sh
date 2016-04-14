@@ -8,5 +8,8 @@ virtualenv fshare
 
 fshare/bin/pip install -r requirements.txt
 
+git clone git://github.com/amix/vimrc.git ~/.vim_runtime
+sh ~/.vim_runtime/install_basic_vimrc.sh
+
 echo "Done"
 
