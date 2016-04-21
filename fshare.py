@@ -17,11 +17,17 @@ password = "Your Password Here"
 
 # Get file id from link
 def get_id(link):
+    """
+    Get fshare ID from URL
+    """
     return link.split("/")[-1]
 
 
 # Get data for requests
 def get_data(file_id):
+    """
+    All data for requests
+    """
     url = "https://www.fshare.vn/file/{0}".format(file_id)
     r = s.get(url)
     tree = html.fromstring(r.content)
@@ -37,6 +43,9 @@ def get_data(file_id):
 
 # Get download link
 def get_link(k):
+    """
+    Return download link.
+    """
     s.post("https://www.fshare.vn/login", cookies=k["cookie"], data=k["data"])
     s.post("https://www.fshare.vn/download/ClearSession", headers=k['headers'], data={"fs_csrf": k['token']})
     s.get(k['url'])
