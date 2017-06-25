@@ -50,7 +50,8 @@ Please create issues so I can improve or fix my lib.
 
 ## Enjoy and have fun :)  
 *Fork what you can, push nothing back!*  
-<center>
+<center>  
+
 ![](http://24.media.tumblr.com/tumblr_lvnf2zS3Xc1qjhjdwo2_r3_500.gif)  
 
 ![](http://25.media.tumblr.com/tumblr_lvnf2zS3Xc1qjhjdwo3_r3_500.gif)
