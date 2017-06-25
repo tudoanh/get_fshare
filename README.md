@@ -4,9 +4,9 @@
 [![forthebadge](http://forthebadge.com/images/badges/check-it-out.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 ## Getting started  
 
-First, install dependencies:  
+First, install `get_fshare` with `pip`:  
 ``` bash
-$ pip install -r requirements.txt
+$ pip install get_fshare
 ```  
 
 Then you can use normaly.  
@@ -40,6 +40,7 @@ Silicon.Valley.S01.720p.HDTV.E008-PhimVIPvn.net.mp4 http://download014.fshare.vn
 ```  
 
 ## Requirements  
+* Python 3.5+
 * [requests](https://github.com/request/request)
 * [lxml](https://github.com/lxml/lxml)
 
@@ -49,7 +50,8 @@ Please create issues so I can improve or fix my lib.
 
 ## Enjoy and have fun :)  
 *Fork what you can, push nothing back!*  
-
+<center>
 ![](http://24.media.tumblr.com/tumblr_lvnf2zS3Xc1qjhjdwo2_r3_500.gif)  
 
 ![](http://25.media.tumblr.com/tumblr_lvnf2zS3Xc1qjhjdwo3_r3_500.gif)
+</center>
