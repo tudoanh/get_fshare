@@ -21,6 +21,9 @@ class FS:
                            "Chrome/49.0.2623.108 Safari/537.36")
 
     def get_token(self, response):
+        """
+        Get csrf token for POST requests.
+        """
         tree = html.fromstring(response.content)
         try:
             token = tree.xpath('//*[@name="fs_csrf"]')[0].value
@@ -30,6 +33,9 @@ class FS:
             pass
 
     def login(self):
+        """
+        Login to Fshare with given account info.
+        """
         self.s.headers.update({'User-Agent': self.user_agent})
         r = self.s.get(self.login_url)
         token = self.get_token(r)
@@ -50,6 +56,9 @@ class FS:
             pass
 
     def get_link(self, url):
+        """
+        Get Fshare download link from given url.
+        """
         r = self.s.get(url)
         token = self.get_token(r)
         file_id = url.split("/")[-1]
@@ -67,6 +76,9 @@ class FS:
             raise Exception('Get link failed.')
 
     def extract_links(self, folder_url):
+        """
+        Get all links in Fshare folder.
+        """
         r = self.s.get(folder_url)
         tree = html.fromstring(r.content)
         links = tree.xpath('//*[@class="filename"]/@href')
@@ -81,3 +93,38 @@ class FS:
         file_name = "".join(tree.xpath(
                             '//*[@class="margin-bottom-15"]/text()')).strip()
         return file_name
+
+    def get_file_size(self, url):
+        """
+        Get file size. If not have, return Unknow
+        """
+        r = self.s.get(url)
+        tree = html.fromstring(r.content)
+        loader = tree.xpath(
+            '//*[@class="fa fa-hdd-o"]/following-sibling::text()')
+        if loader:
+            return loader[0].strip()
+        else:
+            return 'Unknown'
+
+    def get_folder_name(self, folder_url):
+        """
+        Get folder name (title)
+        """
+        r = self.s.get(folder_url)
+        tree = html.fromstring(r.content)
+        title = tree.xpath('//title/text()')
+        if title:
+            return title[0].strip('Fshare - ')
+        else:
+            return r.url
+
+    def is_alive(self, url):
+        """
+        Check if link is alive.
+        """
+        r = self.s.head(url)
+        if r.status_code == 200:
+            return True
+        else:
+            return False

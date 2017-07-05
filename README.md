@@ -44,6 +44,14 @@ Silicon.Valley.S01.720p.HDTV.E008-PhimVIPvn.net.mp4 http://download014.fshare.vn
 * [requests](https://github.com/request/request)
 * [lxml](https://github.com/lxml/lxml)
 
+
+## Current functions  
+* Get download link
+* Extract links from folder
+* Get file name from link
+* Get file size from link  
+
+
 ## Question?  
 Please create issues so I can improve or fix my lib.  
 
