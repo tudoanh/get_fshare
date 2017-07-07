@@ -59,30 +59,47 @@ class FS:
         """
         Get Fshare download link from given url.
         """
-        r = self.s.get(url)
-        token = self.get_token(r)
-        file_id = url.split("/")[-1]
-        dl_data = {'fs_csrf': token,
-                   "DownloadForm[pwd]": "",
-                   "DownloadForm[linkcode]": file_id,
-                   "ajax": "download-form",
-                   "undefined": "undefined"}
-        r = self.s.post("https://www.fshare.vn/download/get",
-                        data=dl_data)
-        try:
-            link = r.json()
-            return link.get('url')
-        except json.decoder.JSONDecodeError:
-            raise Exception('Get link failed.')
+        if self.is_exist(url):
+            r = self.s.get(url)
+            token = self.get_token(r)
+            file_id = url.split("/")[-1]
+            dl_data = {'fs_csrf': token,
+                       "DownloadForm[pwd]": "",
+                       "DownloadForm[linkcode]": file_id,
+                       "ajax": "download-form",
+                       "undefined": "undefined"}
+            r = self.s.post("https://www.fshare.vn/download/get",
+                            data=dl_data)
+            try:
+                link = r.json()
+                return link.get('url')
+            except json.decoder.JSONDecodeError:
+                raise Exception('Get link failed.')
+        else:
+            return ''
 
     def extract_links(self, folder_url):
         """
         Get all links in Fshare folder.
+        Return list of all item with info of each.
         """
         r = self.s.get(folder_url)
         tree = html.fromstring(r.content)
         links = tree.xpath('//*[@class="filename"]/@href')
-        return links
+        names = tree.xpath('//*[@class="filename"]/@title')
+        sizes = tree.xpath(
+            '//*[@class="pull-left file_size align-right"]/text()')
+
+        data = list(zip(names, links, sizes))
+        folder_data = [
+            {
+                'file_name': d[0],
+                'file_url': d[1],
+                'file_size': d[2]
+            }
+            for d in data
+        ]
+        return folder_data
 
     def get_file_name(self, url):
         """
@@ -128,3 +145,15 @@ class FS:
             return True
         else:
             return False
+
+    def is_exist(self, url):
+        '''
+        Check if file is exist or not.
+        If exist, return True. Else, return False
+        '''
+        r = self.s.get(url)
+        tree = html.fromstring(r.content)
+        if tree.xpath('//*[@class="text-danger margin-bottom-15"]'):
+            return False
+        else:
+            return True
