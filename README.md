@@ -50,6 +50,7 @@ Silicon.Valley.S01.720p.HDTV.E008-PhimVIPvn.net.mp4 http://download014.fshare.vn
 * Extract links from folder
 * Get file name from link
 * Get file size from link  
+* Upload file to your account
 
 
 ## Question?  
