@@ -1,4 +1,4 @@
-# Script get link Fshare.vn with Python
+# A Fshare API tool built with Python
 -----------------
 [![forthebadge](http://forthebadge.com/images/badges/made-with-python.svg)](http://forthebadge.com)
 [![forthebadge](http://forthebadge.com/images/badges/check-it-out.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
@@ -46,11 +46,11 @@ Silicon.Valley.S01.720p.HDTV.E008-PhimVIPvn.net.mp4 http://download014.fshare.vn
 
 
 ## Current functions  
-* Get download link
-* Extract links from folder
+* Get Fshare download link
+* Extract links from Fshare folder
 * Get file name from link
 * Get file size from link  
-* Upload file to your account
+* Upload file to your Fshare account
 
 
 ## Question?  
