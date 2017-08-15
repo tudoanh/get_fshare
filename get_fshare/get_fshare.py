@@ -2,8 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import json
-import requests
+import io
 from lxml import html
+import math
+import ntpath
+import os
+import requests
 
 
 class FS:
@@ -157,3 +161,95 @@ class FS:
             return False
         else:
             return True
+
+    def upload_file(self, file_path):
+        """
+        Upload file to Fshare
+        """
+        UPLOAD_URL = 'https://www.fshare.vn/api/session/upload'
+        file_name = ntpath.basename(file_path)
+        file_size = str(os.path.getsize(file_path))
+        try:
+            data = io.open(file_path, 'rb', buffering=25000000)
+        except FileNotFoundError:
+            raise Exception('File does not exist!')
+
+        r1 = self.s.get('https://www.fshare.vn/home?upload=1')
+        tree = html.fromstring(r1.content)
+        token_data = tree.xpath('//*[@class="pull-left breadscum"]')
+        if token_data:
+            token = token_data[0].get('data-token')
+        else:
+            raise Exception('Can not get token')
+
+        payload = {'SESSID': dict(self.s.cookies).get('session_id'),
+                   'name': file_name,
+                   'path': '/',
+                   'secured': 0,
+                   'size': file_size,
+                   'token': token}
+
+        res = self.s.post(UPLOAD_URL, data=json.dumps(payload))
+        body = res.json()
+
+        if body.get('code') != 200:
+            raise Exception('Initial handshake errors %r', body)
+
+        location = body['location']
+
+        # OPTIONS for chunk upload configuration
+        max_chunk_size = 25000000
+        chunk_total = math.ceil(int(file_size)/max_chunk_size)
+
+        for i in range(chunk_total):
+            chunk_number = i + 1
+            sent = last_index = i * max_chunk_size
+            remaining = int(file_size) - sent
+            if remaining < max_chunk_size:
+                current_chunk = remaining
+            else:
+                current_chunk = max_chunk_size
+
+            next_index = last_index + current_chunk
+
+            chunk_params = {
+                'flowChunkNumber': chunk_number,
+                'flowChunkSize': max_chunk_size,
+                'flowCurrentChunkSize': current_chunk,
+                'flowTotalSize': file_size,
+                'flowIdentifier': '{0}-{1}'.format(current_chunk, file_name),
+                'flowFilename': file_name,
+                'flowRelativePath': file_name,
+                'flowTotalChunks': chunk_total
+            }
+
+            res = self.s.options(location, params=chunk_params)
+
+            # POST upload data
+            headers = {
+                'Host': 'up.fshare.vn',
+                'User-Agent': self.user_agent,
+                'Accept': '*/*',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Referer': 'https://www.fshare.vn/transfer',
+                'Content-Range': 'bytes {0}-{1}/{2}'.format(
+                    last_index,
+                    next_index - 1,
+                    file_size),
+                'Content-Length': str(current_chunk),
+                'Origin': 'https://www.fshare.vn',
+                'DNT': '1',
+                'Connection': 'keep-alive'
+            }
+            res = self.s.post(location,
+                                params=chunk_params,
+                                headers=headers,
+                                data=data.read(max_chunk_size))
+            try:
+                if res.json():
+                    return res.json()
+                pass
+            except Exception:
+                pass
+        data.close()

@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='get_fshare',
-      version='1.0.9',
+      version='1.1.0',
       description='Python lib to get link Fshare.vn',
       url='http://github.com/tudoanh/get_fshare',
       author='Do Anh Tu',
