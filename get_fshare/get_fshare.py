@@ -36,6 +36,21 @@ class FS:
             raise Exception('No token for url {}'.format(response.url))
             pass
 
+    def get_movie_token(self):
+        """
+        Get data token of homepage.
+        """
+        response = self.s.get('https://www.fshare.vn/home')
+        tree = html.fromstring(response.content)
+        try:
+            token = tree.xpath(
+                '//*[@class="pull-left breadscum"]')[0].get('data-token')
+            self.movie_token = token
+            return token
+        except IndexError:
+            raise Exception('No token for url {}'.format(response.url))
+            pass
+
     def login(self):
         """
         Login to Fshare with given account info.
@@ -58,6 +73,36 @@ class FS:
             raise Exception('Login failed. Please check your email & password')
         else:
             pass
+
+    def get_movie(self, movie_id):
+        """
+        Get direct link for video file from your storage account.
+        """
+        headers = {
+             'User-Agent': self.user_agent,
+             'Accept': '*/*',
+             'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6',
+             'Accept-Encoding': 'gzip, deflate, br',
+             'Referer': 'https://www.fshare.vn/home',
+             'Content-Length': '81',
+             'Origin': 'https://www.fshare.vn',
+             'Connection': 'keep-alive',
+             'Host': 'www.fshare.vn'
+        }
+
+        token = self.movie_token
+        data = {'token': token, 'linkcode': movie_id}
+
+        r = self.s.post('https://www.fshare.vn/api/fileops/watch',
+                        json=data,
+                        headers=headers)
+
+        try:
+            link = r.json()
+            return link
+        except json.decoder.JSONDecodeError:
+            return r
+            raise Exception('Get link failed.')
 
     def get_link(self, url):
         """
@@ -162,7 +207,7 @@ class FS:
         else:
             return True
 
-    def upload_file(self, file_path):
+    def upload_file(self, file_path, secured=0):
         """
         Upload file to Fshare
         """
@@ -185,7 +230,7 @@ class FS:
         payload = {'SESSID': dict(self.s.cookies).get('session_id'),
                    'name': file_name,
                    'path': '/',
-                   'secured': 0,
+                   'secured': secured,
                    'size': file_size,
                    'token': token}
 
@@ -243,9 +288,9 @@ class FS:
                 'Connection': 'keep-alive'
             }
             res = self.s.post(location,
-                                params=chunk_params,
-                                headers=headers,
-                                data=data.read(max_chunk_size))
+                              params=chunk_params,
+                              headers=headers,
+                              data=data.read(max_chunk_size))
             try:
                 if res.json():
                     return res.json()
