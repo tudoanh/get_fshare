@@ -101,7 +101,7 @@ class FS:
             link = r.json()
             return link
         except json.decoder.JSONDecodeError:
-            return r
+            print(r.status_code, r.text, self.movie_token, data)
             raise Exception('Get link failed.')
 
     def get_link(self, url):
