@@ -22,7 +22,7 @@ class FS:
         self.login_url = "https://www.fshare.vn/login"
         self.user_agent = ("Mozilla/5.0 (X11; Linux x86_64) "
                            "AppleWebKit/537.36 (KHTML, like Gecko) "
-                           "Chrome/49.0.2623.108 Safari/537.36")
+                           "Chrome/59.0.3071.115 Safari/537.36")
 
     def get_token(self, response):
         """
@@ -79,15 +79,15 @@ class FS:
         Get direct link for video file from your storage account.
         """
         headers = {
-             'User-Agent': self.user_agent,
-             'Accept': '*/*',
-             'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6',
-             'Accept-Encoding': 'gzip, deflate, br',
-             'Referer': 'https://www.fshare.vn/home',
-             'Content-Length': '81',
-             'Origin': 'https://www.fshare.vn',
-             'Connection': 'keep-alive',
-             'Host': 'www.fshare.vn'
+            'User-Agent': self.user_agent,
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Referer': 'https://www.fshare.vn/home',
+            'Content-Length': '81',
+            'Origin': 'https://www.fshare.vn',
+            'Connection': 'keep-alive',
+            'Host': 'www.fshare.vn'
         }
 
         token = self.movie_token
@@ -109,21 +109,24 @@ class FS:
         Get Fshare download link from given url.
         """
         if self.is_exist(url):
-            r = self.s.get(url)
-            token = self.get_token(r)
-            file_id = url.split("/")[-1]
-            dl_data = {'fs_csrf': token,
-                       "DownloadForm[pwd]": "",
-                       "DownloadForm[linkcode]": file_id,
-                       "ajax": "download-form",
-                       "undefined": "undefined"}
-            r = self.s.post("https://www.fshare.vn/download/get",
-                            data=dl_data)
-            try:
-                link = r.json()
-                return link.get('url')
-            except json.decoder.JSONDecodeError:
-                raise Exception('Get link failed.')
+            r = self.s.get(url, allow_redirects=False)
+            if r.status_code == 200:
+                token = self.get_token(r)
+                file_id = url.split("/")[-1]
+                dl_data = {'fs_csrf': token,
+                           "DownloadForm[pwd]": "",
+                           "DownloadForm[linkcode]": file_id,
+                           "ajax": "download-form",
+                           "undefined": "undefined"}
+                r = self.s.post("https://www.fshare.vn/download/get",
+                                data=dl_data)
+                try:
+                    link = r.json()
+                    return link.get('url')
+                except json.decoder.JSONDecodeError:
+                    raise Exception('Get link failed.')
+            else: # Case auto download set True in Fshare account setting
+                return r.headers['Location']
         else:
             return ''
 
@@ -189,7 +192,7 @@ class FS:
         """
         Check if link is alive.
         """
-        r = self.s.head(url)
+        r = self.s.head(url, allow_redirects=True)
         if r.status_code == 200:
             return True
         else:
@@ -200,11 +203,14 @@ class FS:
         Check if file is exist or not.
         If exist, return True. Else, return False
         '''
-        r = self.s.get(url)
-        tree = html.fromstring(r.content)
-        if tree.xpath('//*[@class="text-danger margin-bottom-15"]'):
-            return False
-        else:
+        r = self.s.get(url, allow_redirects=False)
+        if r.status_code == 200:
+            tree = html.fromstring(r.content)
+            if tree.xpath('//*[@class="text-danger margin-bottom-15"]'):
+                return False
+            else:
+                return True
+        else: # Case auto download set True in Fshare account setting
             return True
 
     def upload_file(self, file_path, secured=0):
