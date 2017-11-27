@@ -157,7 +157,7 @@ class FS:
         """
         Strip extra space out of file's name
         """
-        r = self.s.get(url)
+        r = requests.get(url)
         tree = html.fromstring(r.content)
         file_name = "".join(tree.xpath(
                             '//*[@class="margin-bottom-15"]/text()')).strip()
@@ -167,7 +167,7 @@ class FS:
         """
         Get file size. If not have, return Unknow
         """
-        r = self.s.get(url)
+        r = requests.get(url)
         tree = html.fromstring(r.content)
         loader = tree.xpath(
             '//*[@class="fa fa-hdd-o"]/following-sibling::text()')
