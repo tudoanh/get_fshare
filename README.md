@@ -2,6 +2,8 @@
 -----------------
 [![forthebadge](http://forthebadge.com/images/badges/made-with-python.svg)](http://forthebadge.com)
 [![forthebadge](http://forthebadge.com/images/badges/check-it-out.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
+[![Build Status](https://circleci.com/gh/tudoanh/get_fshare.png?circle-token=76fafffc2a4ba9d254a5a1d3ac6583b75daff3c2)](https://github.com/tudoanh/get_fshare)
+[![Build Status](https://circleci.com/gh/tudoanh/get_fshare.png?style=shield&circle-token=76fafffc2a4ba9d254a5a1d3ac6583b75daff3c2)](https://github.com/tudoanh/get_fshare)
 ## Getting started  
 
 First, install `get_fshare` with `pip`:  
