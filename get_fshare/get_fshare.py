@@ -19,10 +19,17 @@ class FS:
         self.email = email
         self.password = password
         self.s = requests.Session()
-        self.login_url = "https://www.fshare.vn/login"
-        self.user_agent = ("Mozilla/5.0 (X11; Linux x86_64) "
-                           "AppleWebKit/537.36 (KHTML, like Gecko) "
-                           "Chrome/59.0.3071.115 Safari/537.36")
+        self.login_url = "https://www.fshare.vn/site/login"
+        self.user_agent = (
+            "Mozilla/5.0 (X11; Linux x86_64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/59.0.3071.115 Safari/537.36"
+        )
+        self.folder_api = (
+            'https://www.fshare.vn/api/v3/files/'
+            'folder?linkcode={}&sort=type,name'
+        )
+        self.file_url = 'https://www.fshare.vn/file/{}'
 
     def get_token(self, response):
         """
@@ -30,7 +37,7 @@ class FS:
         """
         tree = html.fromstring(response.content)
         try:
-            token = tree.xpath('//*[@name="fs_csrf"]')[0].value
+            token = tree.xpath('//*[@name="csrf-token"]')[0].get('content')
             return token
         except IndexError:
             raise Exception('No token for url {}'.format(response.url))
@@ -44,7 +51,8 @@ class FS:
         tree = html.fromstring(response.content)
         try:
             token = tree.xpath(
-                '//*[@class="pull-left breadscum"]')[0].get('data-token')
+                '//*[@class="pull-left breadscum"]'
+            )[0].get('data-token')
             self.movie_token = token
             return token
         except IndexError:
@@ -59,12 +67,12 @@ class FS:
         r = self.s.get(self.login_url)
         token = self.get_token(r)
         cookies = r.cookies
-        data = {'fs_csrf': token,
-                'LoginForm[email]': self.email,
-                'LoginForm[password]': self.password,
-                'LoginForm[rememberMe]': 1,
-                'LoginForm[checkloginpopup]': 0,
-                'yt0': u'Đăng nhập'}
+        data = {
+            '_csrf-app': token,
+            'LoginForm[email]': self.email,
+            'LoginForm[password]': self.password,
+            'LoginForm[rememberMe]': 1,
+        }
         self.s.post(self.login_url, cookies=cookies, data=data)
         r = self.s.get('https://www.fshare.vn/')
 
@@ -113,11 +121,12 @@ class FS:
             if r.status_code == 200:
                 token = self.get_token(r)
                 file_id = url.split("/")[-1]
-                dl_data = {'fs_csrf': token,
-                           "DownloadForm[pwd]": "",
-                           "DownloadForm[linkcode]": file_id,
-                           "ajax": "download-form",
-                           "undefined": "undefined"}
+                dl_data = {
+                    '_csrf-app': token,
+                    "fcode5": "",
+                    "linkcode": file_id,
+                    "withFcode5": 0,
+                }
                 r = self.s.post("https://www.fshare.vn/download/get",
                                 data=dl_data)
                 try:
@@ -125,7 +134,7 @@ class FS:
                     return link.get('url')
                 except json.decoder.JSONDecodeError:
                     raise Exception('Get link failed.')
-            else: # Case auto download set True in Fshare account setting
+            else:  # In case auto download is enable in account setting
                 return r.headers['Location']
         else:
             return ''
@@ -135,21 +144,16 @@ class FS:
         Get all links in Fshare folder.
         Return list of all item with info of each.
         """
-        r = self.s.get(folder_url)
-        tree = html.fromstring(r.content)
-        links = tree.xpath('//*[@class="filename"]/@href')
-        names = tree.xpath('//*[@class="filename"]/@title')
-        sizes = tree.xpath(
-            '//*[@class="pull-left file_size align-right"]/text()')
+        folder_id = folder_url.split('/')[-1]
+        data = self.s.get(self.folder_api.format(folder_id)).json()
 
-        data = list(zip(names, links, sizes))
         folder_data = [
             {
-                'file_name': d[0],
-                'file_url': d[1],
-                'file_size': d[2]
+                'file_name': d['name'],
+                'file_url': self.file_url.format(d['linkcode']),
+                'file_size': d['size']
             }
-            for d in data
+            for d in data['items']
         ]
         return folder_data
 
@@ -159,8 +163,9 @@ class FS:
         """
         r = requests.get(url)
         tree = html.fromstring(r.content)
-        file_name = "".join(tree.xpath(
-                            '//*[@class="margin-bottom-15"]/text()')).strip()
+        file_name = tree.xpath(
+            '//*[@property="og:title"]'
+        )[0].get('content').split(' - ')[0]
         return file_name
 
     def get_file_size(self, url):
@@ -169,10 +174,9 @@ class FS:
         """
         r = requests.get(url)
         tree = html.fromstring(r.content)
-        loader = tree.xpath(
-            '//*[@class="fa fa-hdd-o"]/following-sibling::text()')
-        if loader:
-            return loader[0].strip()
+        file_size = tree.xpath('//*[@class="size"]/text()')
+        if file_size:
+            return file_size[1].strip()
         else:
             return 'Unknown'
 
@@ -206,11 +210,12 @@ class FS:
         r = self.s.get(url, allow_redirects=False)
         if r.status_code == 200:
             tree = html.fromstring(r.content)
-            if tree.xpath('//*[@class="text-danger margin-bottom-15"]'):
+            title = tree.xpath('//title/text()')[0]
+            if title == 'Not Found - Fshare':
                 return False
             else:
                 return True
-        else: # Case auto download set True in Fshare account setting
+        else:  # In case auto download is enable in account setting
             return True
 
     def upload_file(self, file_path, secured=0):

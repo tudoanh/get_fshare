@@ -52,6 +52,8 @@ Silicon.Valley.S01.720p.HDTV.E008-PhimVIPvn.net.mp4 http://download014.fshare.vn
 * Get file size from link  
 * Upload file to your Fshare account
 
+## Test
+Just run `pytest`
 
 ## Question?  
 Please create issues so I can improve or fix my lib.  
