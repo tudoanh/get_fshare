@@ -30,6 +30,10 @@ class FS:
             'folder?linkcode={}&sort=type,name'
         )
         self.file_url = 'https://www.fshare.vn/file/{}'
+        self.media_api = (
+            'https://www.fshare.vn/api/v3/files/'
+            'download?dl_type=media&linkcode={}'
+        )
 
     def get_token(self, response):
         """
@@ -38,22 +42,6 @@ class FS:
         tree = html.fromstring(response.content)
         try:
             token = tree.xpath('//*[@name="csrf-token"]')[0].get('content')
-            return token
-        except IndexError:
-            raise Exception('No token for url {}'.format(response.url))
-            pass
-
-    def get_movie_token(self):
-        """
-        Get data token of homepage.
-        """
-        response = self.s.get('https://www.fshare.vn/home')
-        tree = html.fromstring(response.content)
-        try:
-            token = tree.xpath(
-                '//*[@class="pull-left breadscum"]'
-            )[0].get('data-token')
-            self.movie_token = token
             return token
         except IndexError:
             raise Exception('No token for url {}'.format(response.url))
@@ -82,35 +70,33 @@ class FS:
         else:
             pass
 
-    def get_movie(self, movie_id):
+    def get_media_link(self, media_id):
         """
         Get direct link for video file from your storage account.
         """
+        url = self.media_api.format(media_id)
+
+        r = self.s.get('https://www.fshare.vn/file/manager')
+        token = self.get_token(r)
         headers = {
             'User-Agent': self.user_agent,
-            'Accept': '*/*',
+            'Accept': 'application/json, text/plain, */*',
             'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6',
             'Accept-Encoding': 'gzip, deflate, br',
-            'Referer': 'https://www.fshare.vn/home',
-            'Content-Length': '81',
-            'Origin': 'https://www.fshare.vn',
+            'Referer': 'https://www.fshare.vn/file/manager',
             'Connection': 'keep-alive',
-            'Host': 'www.fshare.vn'
+            'Host': 'www.fshare.vn',
+            'Authorization': 'Bearer {}'.format(token)
         }
 
-        token = self.movie_token
-        data = {'token': token, 'linkcode': movie_id}
-
-        r = self.s.post('https://www.fshare.vn/api/fileops/watch',
-                        json=data,
-                        headers=headers)
+        r = self.s.get(url, headers=headers)
 
         try:
             link = r.json()
             return link
         except json.decoder.JSONDecodeError:
             print(r.status_code, r.text, self.movie_token, data)
-            raise Exception('Get link failed.')
+            raise Exception('Get media link failed.')
 
     def get_link(self, url):
         """

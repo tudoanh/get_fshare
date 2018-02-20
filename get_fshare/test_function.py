@@ -39,3 +39,7 @@ class FshareTest(unittest.TestCase):
     def test_extract_links(self):
         links = self.bot.extract_links(self.folder_url)
         assert len(links) == 6
+
+    def test_get_media_link(self):
+        link = self.bot.get_media_link(self.file_url)
+        self.assertTrue(link)
