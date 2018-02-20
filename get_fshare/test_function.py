@@ -9,6 +9,7 @@ class FshareTest(unittest.TestCase):
         self.file_url = 'https://www.fshare.vn/file/TJ1WSZWAKT'
         self.folder_url = 'https://www.fshare.vn/folder/THFVWDY4YT'
         self.dead_url = 'https://www.fshare.vn/file/775S9PFR9RRB'
+        self.media_id = 'TJ1WSZWAKT'
 
     def test_login(self):
         r = self.bot.s.get('https://www.fshare.vn/')
@@ -41,5 +42,5 @@ class FshareTest(unittest.TestCase):
         assert len(links) == 6
 
     def test_get_media_link(self):
-        link = self.bot.get_media_link(self.file_url)
-        self.assertTrue(link)
+        link = self.bot.get_media_link(self.media_id)
+        assert isinstance(link, str) is True

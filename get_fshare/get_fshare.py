@@ -76,8 +76,7 @@ class FS:
         """
         url = self.media_api.format(media_id)
 
-        r = self.s.get('https://www.fshare.vn/file/manager')
-        token = self.get_token(r)
+        authorization_code = self.s.cookies.get_dict()['fshare-app']
         headers = {
             'User-Agent': self.user_agent,
             'Accept': 'application/json, text/plain, */*',
@@ -86,7 +85,7 @@ class FS:
             'Referer': 'https://www.fshare.vn/file/manager',
             'Connection': 'keep-alive',
             'Host': 'www.fshare.vn',
-            'Authorization': 'Bearer {}'.format(token)
+            'Authorization': 'Bearer {}'.format(authorization_code)
         }
 
         r = self.s.get(url, headers=headers)
