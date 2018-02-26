@@ -150,7 +150,7 @@ class FS:
         tree = html.fromstring(r.content)
         file_name = tree.xpath(
             '//*[@property="og:title"]'
-        )[0].get('content').split(' - ')[0]
+        )[0].get('content').split(' - Fshare')[0]
         return file_name
 
     def get_file_size(self, url):
