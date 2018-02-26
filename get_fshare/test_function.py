@@ -44,3 +44,6 @@ class FshareTest(unittest.TestCase):
     def test_get_media_link(self):
         link = self.bot.get_media_link(self.media_id)
         assert isinstance(link, str) is True
+
+    def tearDown(self):
+        self.bot.log_out()

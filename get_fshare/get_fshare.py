@@ -203,6 +203,9 @@ class FS:
         else:  # In case auto download is enable in account setting
             return True
 
+    def log_out(self):
+        self.s.get('https://www.fshare.vn/site/logout')
+
     def upload_file(self, file_path, secured=0):
         """
         Upload file to Fshare
