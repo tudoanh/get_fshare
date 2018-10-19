@@ -7,6 +7,7 @@ from lxml import html
 import math
 import ntpath
 import os
+import string
 import requests
 
 
@@ -380,7 +381,13 @@ class FSAPI:
         import os
         import io
         import ntpath
+        import unidecode
         file_name = ntpath.basename(local_path)
+        def format_filename(s):
+            valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+            filename = ''.join(c for c in s if c in valid_chars)
+            return filename
+        file_name = format_filename(unidecode.unidecode(file_name))
         file_size = str(os.path.getsize(local_path))
         try:
             data = io.open(local_path, 'rb', buffering=25000000)
