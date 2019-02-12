@@ -1,1 +1,1 @@
-from .get_fshare import FS, FSAPI
+from .get_fshare import FSAPI

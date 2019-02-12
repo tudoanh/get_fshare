@@ -12,6 +12,6 @@ lxml==3.8.0
 pluggy==0.6.0             # via pytest
 py==1.5.2                 # via pytest
 pytest==3.4.0
-requests==2.18.1
+requests==2.21.0
 six==1.11.0               # via pytest
 urllib3==1.21.1           # via requests

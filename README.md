@@ -16,7 +16,7 @@ Then you can use normaly.
 **Example code**  
 
 ``` python
-from get_fshare import FS
+from get_fshare import FSAPI
 
 URL = 'https://www.fshare.vn/folder/THFVWDY4YT'
 
