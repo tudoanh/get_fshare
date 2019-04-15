@@ -62,7 +62,7 @@ Please create issues so I can improve or fix my lib.
 
 
 ## Enjoy and have fun :)  
-*Fork what you can, push nothing back!*  
+*Fork what you can, push ~~nothing~~ something back!*  
 <center>  
 
 ![](http://24.media.tumblr.com/tumblr_lvnf2zS3Xc1qjhjdwo2_r3_500.gif)  
