@@ -20,12 +20,12 @@ from get_fshare import FSAPI
 
 URL = 'https://www.fshare.vn/folder/THFVWDY4YT'
 
-bot = FS(email="Your email", password="Your password")
+bot = FSAPI(email="Your email", password="Your password")
 bot.login()
-sillicon_valley_ss1 = bot.extract_links(URL)
+sillicon_valley_ss1 = bot.get_folder_urls(URL)
 
 for episode in sillicon_valley_ss1:
-    print(bot.get_file_name(episode), bot.get_link(episode))
+    print(episode['name'], bot.download("https://www.fshare.vn/file/{}".format(episode['linkcode'])))
 ```
 
 **Result**  
