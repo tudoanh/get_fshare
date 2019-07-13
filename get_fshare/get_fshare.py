@@ -1,17 +1,15 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import json
-import io
-from lxml import html
 import math
-import ntpath
-import os
 import string
 import requests
 
 
 class FSAPI:
+    """
+    API Interface of Fshare.vn
+    """
     def __init__(self, email, password):
         self.email = email
         self.password = password
@@ -35,21 +33,32 @@ class FSAPI:
         self.s.cookies.set('session_id', cookie)
         return data
 
+    def profile(self):
+        r = self.s.get('https://api.fshare.vn/api/user/get')
+        return r.json()
+
     def check_valid(self, url):
         url = url.strip()
         if not url.startswith('https://www.fshare.vn/'):
             raise Exception("Must be Fshare url")
         return url
 
-    def download(self, url):
+    def download(self, url, password=None):
         url = self.check_valid(url)
+        payload = {
+            'token': self.token,
+            'url': url
+        }
+        if password:
+            payload['password'] = password
+
         r = self.s.post(
             'https://api.fshare.vn/api/session/download',
-            json={
-                'token': self.token,
-                'url': url
-            }
+            json=payload
         )
+
+        if r.status_code == 403:
+            raise Exception("Password invalid")
 
         if r.status_code != 200:
             raise Exception("Link is dead")
