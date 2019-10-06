@@ -1,8 +1,11 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
+import json
 import math
 import string
+
+from hyper import HTTPConnection
 import requests
 
 
@@ -18,18 +21,18 @@ class FSAPI:
         self.s.headers['User-Agent'] = 'okhttp/3.6.0'
 
     def login(self):
-        r = self.s.post(
-            'https://api.fshare.vn/api/user/login',
-            json={
-                'user_email': self.email,
-                'password': self.password,
-                'app_key': "L2S7R6ZMagggC5wWkQhX2+aDi467PPuftWUMRFSn"
-            }
-        )
+        conn = HTTPConnection('api.fshare.vn:443')
+        data = {
+            'user_email': self.email,
+            'password': self.password,
+            'app_key': "L2S7R6ZMagggC5wWkQhX2+aDi467PPuftWUMRFSn"
+        }
+        login_request = conn.request('POST', '/api/user/login/', body=json.dumps(data))
+        response = conn.get_response(login_request)
+        login_data = json.loads(response.read().decode('utf-8'))
 
-        data = r.json()
-        self.token = data['token']
-        cookie = data['session_id']
+        self.token = login_data['token']
+        cookie = login_data['session_id']
         self.s.cookies.set('session_id', cookie)
         return data
 
