@@ -21,7 +21,7 @@ class FSAPI:
         self.s.headers['User-Agent'] = 'okhttp/3.6.0'
 
     def login(self):
-        conn = HTTPConnection('api.fshare.vn:443')
+        conn = HTTPConnection('api2.fshare.vn:443')
         data = {
             'user_email': self.email,
             'password': self.password,
@@ -37,7 +37,7 @@ class FSAPI:
         return data
 
     def profile(self):
-        r = self.s.get('https://api.fshare.vn/api/user/get')
+        r = self.s.get('https://api2.fshare.vn/api/user/get')
         return r.json()
 
     def check_valid(self, url):
@@ -56,7 +56,7 @@ class FSAPI:
             payload['password'] = password
 
         r = self.s.post(
-            'https://api.fshare.vn/api/session/download',
+            'https://api2.fshare.vn/api/session/download',
             json=payload
         )
 
@@ -73,7 +73,7 @@ class FSAPI:
     def get_folder_urls(self, url, page=0, limit=60):
         url = self.check_valid(url)
         r = self.s.post(
-            'https://api.fshare.vn/api/fileops/getFolderList',
+            'https://api2.fshare.vn/api/fileops/getFolderList',
             json={
                 'token': self.token,
                 'url': url,
@@ -86,13 +86,13 @@ class FSAPI:
         return data
 
     def get_home_folders(self):
-        r = self.s.get('https://api.fshare.vn/api/fileops/list?pageIndex=0&dirOnly=0&limit=60')
+        r = self.s.get('https://api2.fshare.vn/api/fileops/list?pageIndex=0&dirOnly=0&limit=60')
         return r.json()
 
     def get_file_info(self, url):
         url = self.check_valid(url)
         r = self.s.post(
-            'https://api.fshare.vn/api/fileops/get',
+            'https://api2.fshare.vn/api/fileops/get',
             json={
                 'token': self.token,
                 'url': url,
@@ -118,7 +118,7 @@ class FSAPI:
             raise Exception('File does not exist!')
 
         r = self.s.post(
-            'https://api.fshare.vn/api/session/upload',
+            'https://api2.fshare.vn/api/session/upload',
             json={
                 'token': self.token,
                 'name': file_name,
