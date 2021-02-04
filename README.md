@@ -6,7 +6,10 @@
 
 # Important
 
-Fshare APIs not work anymore!
+Fshare APIs now serve only VIPs accounts! What a dick move.
+
+**Application for vip accounts only**
+
 
 ## Getting started  
 
