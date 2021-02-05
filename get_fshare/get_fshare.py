@@ -18,7 +18,8 @@ class FSAPI:
         self.email = email
         self.password = password
         self.token = ""
-        self.s = requests.Session()
+        self.s = httpx.Client(http2=True)
+        # self.s = requests.Session()
         self.s.headers["User-Agent"] = "okhttp/3.6.0"
 
     def login(self):
@@ -36,8 +37,8 @@ class FSAPI:
             raise ValueError(login_data["msg"])
 
         self.token = login_data["token"]
-        cookie = login_data["session_id"]
-        self.s.cookies.set("session_id", cookie)
+        session_id = login_data["session_id"]
+        self.s.cookies.set("session_id", session_id)
         return login_data
 
     def profile(self):
@@ -52,9 +53,6 @@ class FSAPI:
 
     def download(self, url, password=None):
         url = self.check_valid(url)
-        import ipdb
-
-        ipdb.set_trace()
         payload = {"token": self.token, "url": url}
         if password:
             payload["password"] = password
