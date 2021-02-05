@@ -9,7 +9,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="get_fshare",
-    version="2.4.0",
+    version="2.5.0",
     description="Python lib to get link Fshare.vn",
     url="http://github.com/tudoanh/get_fshare",
     author="Do Anh Tu",
