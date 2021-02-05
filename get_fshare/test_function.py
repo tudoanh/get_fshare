@@ -11,10 +11,10 @@ class FshareAPITest(unittest.TestCase):
         self.media_id = "I9G9N8YSWS2K"
         self.invalid_url = "https://google.com.vn/"
 
-    def test_login(self):
-        data = self.bot.login()
-        self.assertIn("token", data)
-        self.assertIn("session_id", data)
+    # def test_login(self):
+    #     data = self.bot.login()
+    #     self.assertIn("token", data)
+    #     self.assertIn("session_id", data)
 
     def test_check_valid(self):
         with self.assertRaises(Exception) as context:

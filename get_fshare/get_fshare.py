@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 import math
 import string
 
+import furl
 import httpx
-import requests
 
 
 class FSAPI:
@@ -19,8 +20,8 @@ class FSAPI:
         self.password = password
         self.token = ""
         self.s = httpx.Client(http2=True)
-        # self.s = requests.Session()
         self.s.headers["User-Agent"] = "okhttp/3.6.0"
+        self.debug = False
 
     def login(self):
         client = httpx.Client(http2=True)
@@ -46,9 +47,10 @@ class FSAPI:
         return r.json()
 
     def check_valid(self, url):
-        url = url.strip()
-        if not url.startswith("https://www.fshare.vn/"):
+        url = furl.furl(url)
+        if url.host != "www.fshare.vn":
             raise Exception("Must be Fshare url")
+        url = url.remove(args=True).url
         return url
 
     def download(self, url, password=None):
@@ -57,7 +59,7 @@ class FSAPI:
         if password:
             payload["password"] = password
 
-        resp = self.s.post("https://api.fshare.vn/api/session/download", json=payload)
+        resp = self.s.post("https://api.fshare.vn/api/session/download", data=payload)
 
         if resp.status_code == 403:
             raise Exception("Password invalid")
@@ -73,7 +75,7 @@ class FSAPI:
         url = self.check_valid(url)
         r = self.s.post(
             "https://api.fshare.vn/api/fileops/getFolderList",
-            json={
+            data={
                 "token": self.token,
                 "url": url,
                 "dirOnly": 0,
@@ -94,7 +96,7 @@ class FSAPI:
         url = self.check_valid(url)
         r = self.s.post(
             "https://api.fshare.vn/api/fileops/get",
-            json={
+            data={
                 "token": self.token,
                 "url": url,
             },

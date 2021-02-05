@@ -1,4 +1,4 @@
 lxml
-requests
 pytest
 httpx[http2]
+furl
