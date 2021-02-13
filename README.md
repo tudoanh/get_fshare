@@ -6,9 +6,10 @@
 
 # Important
 
-Fshare APIs now serve only VIPs accounts! What a dick move. I hope they can public their API because their website is BAD, I mean REALLY BAD!
 
-**Application for vip accounts only**
+Fshare being a good guy and publish their APIs here: https://www.fshare.vn/api-doc
+
+Good job, Fshare.
 
 
 ## Getting started  
