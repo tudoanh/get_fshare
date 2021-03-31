@@ -9,7 +9,7 @@ attrs==20.3.0
 certifi==2020.12.5
     # via httpx
 furl==2.1.0
-    # via -r ./requirements.in
+    # via -r requirements.in
 h11==0.12.0
     # via httpcore
 h2==3.2.0
@@ -19,15 +19,15 @@ hpack==3.0.0
 httpcore==0.12.3
     # via httpx
 httpx[http2]==0.16.1
-    # via -r ./requirements.in
+    # via -r requirements.in
 hyperframe==5.2.0
     # via h2
 idna==2.10
     # via rfc3986
 iniconfig==1.1.1
     # via pytest
-lxml==4.6.2
-    # via -r ./requirements.in
+lxml==4.6.3
+    # via -r requirements.in
 orderedmultidict==1.0.1
     # via furl
 packaging==20.9
@@ -39,7 +39,7 @@ py==1.10.0
 pyparsing==2.4.7
     # via packaging
 pytest==6.2.2
-    # via -r ./requirements.in
+    # via -r requirements.in
 rfc3986[idna2008]==1.4.0
     # via httpx
 six==1.15.0
